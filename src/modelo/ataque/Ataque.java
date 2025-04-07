@@ -1,21 +1,17 @@
-package pokemon.ataque;
+package modelo.ataque;
 
-import pokemon.Pokemon;
+import modelo.Pokemon;
 
 public class Ataque {
     String nameAtaque;
     short daño;
-    Pokemon.TipoAtaque tipoPokemon;
+    Pokemon.TipoAtaque tipoPokemon; 
 
     public Ataque(String nameAtaque, Pokemon.TipoAtaque tipoPokemon, short daño) {
         this.nameAtaque = nameAtaque;
         this.tipoPokemon = tipoPokemon;
         this.daño = daño;
     }
-
-    enum TipoAtaque {
-        FISICO, ESPECIAL;
-    };
 
     public String getNameAtaque() {
         return nameAtaque;

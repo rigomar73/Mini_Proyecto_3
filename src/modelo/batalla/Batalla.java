@@ -1,7 +1,8 @@
-package pokemon.batalla;
-import entrenador.Entrenador;
-import pokemon.Pokemon;
-import pokemon.ataque.Ataque;
+package modelo.batalla;
+import modelo.Entrenador;
+import modelo.Pokemon;
+import modelo.ataque.Ataque;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
@@ -109,33 +110,10 @@ public class Batalla {
         System.out.println(defensor.getNamePokemon() + " recibe " + dañoFinal + " puntos de daño. Vida restante: " + defensor.getHp());
     }
 
-    // Método para calcular la ventaja o desventaja de tipo
-    private double calcularVentaja(Pokemon.TipoPokemon tipoAtacante, Pokemon.TipoPokemon tipoDefensor) {
-        // Ventaja de tipos: Fuego > Planta, Planta > Agua, Agua > Fuego, Tierra > Fuego
-        if ((tipoAtacante == Pokemon.TipoPokemon.FUEGO && tipoDefensor == Pokemon.TipoPokemon.PLANTA) ||
-            (tipoAtacante == Pokemon.TipoPokemon.PLANTA && tipoDefensor == Pokemon.TipoPokemon.AGUA) ||
-            (tipoAtacante == Pokemon.TipoPokemon.AGUA && tipoDefensor == Pokemon.TipoPokemon.FUEGO) ||
-            (tipoAtacante == Pokemon.TipoPokemon.TIERRA && tipoDefensor == Pokemon.TipoPokemon.FUEGO)) {
-            System.out.println("¡Es súper efectivo!");
-            return 1.3; // Aumenta el daño en un 30%
-        }
-
-        // Desventaja de tipos: Fuego < Agua, Agua < Planta, Planta < Fuego, Fuego < Tierra
-        if ((tipoAtacante == Pokemon.TipoPokemon.FUEGO && tipoDefensor == Pokemon.TipoPokemon.AGUA) ||
-            (tipoAtacante == Pokemon.TipoPokemon.AGUA && tipoDefensor == Pokemon.TipoPokemon.PLANTA) ||
-            (tipoAtacante == Pokemon.TipoPokemon.PLANTA && tipoDefensor == Pokemon.TipoPokemon.FUEGO) ||
-            (tipoAtacante == Pokemon.TipoPokemon.FUEGO && tipoDefensor == Pokemon.TipoPokemon.TIERRA)) {
-            System.out.println("No es muy efectivo...");
-            return 0.7; // Reduce el daño en un 30%
-        }
-
-        // Sin ventaja ni desventaja
-        return 1.0;
-    }
-
     public void iniciarBatallaGUI(Entrenador entrenador1, Entrenador entrenador2) {
         JFrame frame = new JFrame("Batalla Pokémon");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
         frame.setSize(600, 400);
         frame.setLayout(new BorderLayout());
 
@@ -152,7 +130,7 @@ public class Batalla {
         frame.add(pokemonPanel, BorderLayout.CENTER);
 
         // Área de registro de la batalla
-        JTextArea battleLog = new JTextArea(); // Declaración de battleLog
+        JTextArea battleLog = new JTextArea();
         battleLog.setEditable(false);
         frame.add(new JScrollPane(battleLog), BorderLayout.EAST);
 
@@ -250,10 +228,46 @@ public class Batalla {
         frame.setVisible(true);
     }
 
-    private void realizarAtaque(Pokemon atacante, Pokemon defensor, Ataque ataque, JTextArea battleLog) {
+    // Lógica de ataque para ser usada por la GUI
+    public void realizarAtaque(Pokemon atacante, Pokemon defensor, Ataque ataque, JTextArea battleLog) {
         battleLog.append("\n" + atacante.getNamePokemon() + " usa " + ataque.getNameAtaque() + " contra " + defensor.getNamePokemon());
-        int daño = ataque.getDaño();
-        defensor.setHp((short) Math.max(0, defensor.getHp() - daño));
-        battleLog.append("\n" + defensor.getNamePokemon() + " recibe " + daño + " puntos de daño. Vida restante: " + defensor.getHp());
+
+        double multiplicador = calcularVentaja(atacante.getTypePokemon(), defensor.getTypePokemon());
+
+        int ataqueBase = (ataque.getTipoPokemon() == Pokemon.TipoAtaque.FISICO) ? atacante.getValorAtaque() : atacante.getAtaqueEspecial();
+        int defensaBase = (ataque.getTipoPokemon() == Pokemon.TipoAtaque.FISICO) ? defensor.getDefensa() : defensor.getDefensaEspecial();
+
+        int nivel = atacante.getNivel();
+        int poder = ataque.getDaño();
+        int dañoBase = (((2 * nivel / 5 + 2) * poder * ataqueBase / defensaBase) / 50) + 2;
+
+        int dañoFinal = (int) (dañoBase * multiplicador);
+
+        if (multiplicador > 1.0) {
+            battleLog.append("\n¡Es súper efectivo!");
+        } else if (multiplicador < 1.0) {
+            battleLog.append("\nNo es muy efectivo...");
+        }
+
+        dañoFinal = Math.max(0, dañoFinal);
+
+        defensor.setHp((short) Math.max(0, defensor.getHp() - dañoFinal));
+        battleLog.append("\n" + defensor.getNamePokemon() + " recibe " + dañoFinal + " puntos de daño. Vida restante: " + defensor.getHp());
+    }
+
+    private double calcularVentaja(Pokemon.TipoPokemon tipoAtacante, Pokemon.TipoPokemon tipoDefensor) {
+        if ((tipoAtacante == Pokemon.TipoPokemon.FUEGO && tipoDefensor == Pokemon.TipoPokemon.PLANTA) ||
+            (tipoAtacante == Pokemon.TipoPokemon.PLANTA && tipoDefensor == Pokemon.TipoPokemon.AGUA) ||
+            (tipoAtacante == Pokemon.TipoPokemon.AGUA && tipoDefensor == Pokemon.TipoPokemon.FUEGO) ||
+            (tipoAtacante == Pokemon.TipoPokemon.TIERRA && tipoDefensor == Pokemon.TipoPokemon.FUEGO)) {
+            return 1.3;
+        }
+        if ((tipoAtacante == Pokemon.TipoPokemon.FUEGO && tipoDefensor == Pokemon.TipoPokemon.AGUA) ||
+            (tipoAtacante == Pokemon.TipoPokemon.AGUA && tipoDefensor == Pokemon.TipoPokemon.PLANTA) ||
+            (tipoAtacante == Pokemon.TipoPokemon.PLANTA && tipoDefensor == Pokemon.TipoPokemon.FUEGO) ||
+            (tipoAtacante == Pokemon.TipoPokemon.FUEGO && tipoDefensor == Pokemon.TipoPokemon.TIERRA)) {
+            return 0.7;
+        }
+        return 1.0;
     }
 }
