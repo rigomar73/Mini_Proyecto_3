@@ -4,6 +4,7 @@ import pokemon.element.ElementPokemon;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
+import pokemon.batalla.Batalla;
 
 public class Main {
     public static void main(String[] args) {
@@ -15,11 +16,11 @@ public class Main {
 
         // Pedir nombres de los entrenadores
         System.out.println("Ingrese el nombre del primer entrenador:");
-         String name1 = sc.nextLine(); 
+        String name1 = sc.nextLine();
         entrenador1.setNameTrainer(name1);
 
         System.out.println("Ingrese el nombre del segundo entrenador:");
-        String name2 = sc.nextLine(); 
+        String name2 = sc.nextLine();
         entrenador2.setNameTrainer(name2);
 
         ElementPokemon.initializeData();
@@ -30,7 +31,7 @@ public class Main {
         System.out.println("1. Crear tus propios Pokémon");
         System.out.println("2. Obtener Pokémon aleatorios");
         int opcion1 = sc.nextInt();
-        sc.nextLine(); 
+        sc.nextLine(); // Limpiar el buffer del Scanner
 
         switch (opcion1) {
             case 1 -> {
@@ -74,6 +75,16 @@ public class Main {
             System.out.println("- " + pokemon.getNamePokemon() + " (Tipo: " + pokemon.getTypePokemon() + ")");
         }
 
+        // Elegir Pokémon para la batalla
+        System.out.println("\n" + entrenador1.getNameTrainer() + ", elige tu Pokémon para la batalla:");
+        Pokemon pokemon1 = entrenador1.elegirPokemon(sc);
+
+        System.out.println("\n" + entrenador2.getNameTrainer() + ", elige tu Pokémon para la batalla:");
+        Pokemon pokemon2 = entrenador2.elegirPokemon(sc);
+
+        // Iniciar la batalla
         System.out.println("\n¡Batalla Pokémon lista para comenzar!");
+        Batalla batalla = new Batalla();
+        batalla.iniciarBatalla(pokemon1, pokemon2, sc);
     }
 }

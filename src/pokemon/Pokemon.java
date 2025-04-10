@@ -104,21 +104,45 @@ public abstract class Pokemon {
 
     // Método para crear Pokémon manualmente
     public static Pokemon[] createPokemon(Scanner sc) {
-        Pokemon[] pokemons = new Pokemon[3];
+        Pokemon[] pokemons = new Pokemon[3]; // Cada entrenador puede crear 3 Pokémon
         for (int i = 0; i < pokemons.length; i++) {
             System.out.println("Creando Pokémon " + (i + 1) + ":");
+
+            // Solicitar el nombre del Pokémon
             System.out.println("Ingrese el nombre del Pokémon:");
             String name = sc.next();
 
-            System.out.println("Ingrese el HP del Pokémon (entre 50 y 350):");
-            short hp = sc.nextShort();
+            // Solicitar el HP del Pokémon con validación
+            short hp;
+            do {
+                System.out.println("Ingrese el HP del Pokémon (entre 50 y 350):");
+                while (!sc.hasNextShort()) { // Validar que la entrada sea un número corto
+                    System.out.println("Entrada no válida. Por favor, ingrese un número entre 50 y 350.");
+                    sc.next(); // Limpiar la entrada no válida
+                }
+                hp = sc.nextShort();
+                if (hp < 50 || hp > 350) {
+                    System.out.println("El HP debe estar entre 50 y 350. Inténtalo de nuevo.");
+                }
+            } while (hp < 50 || hp > 350);
 
-            System.out.println("Seleccione el tipo del Pokémon:");
-            System.out.println("1. Fuego");
-            System.out.println("2. Agua");
-            System.out.println("3. Tierra");
-            System.out.println("4. Planta");
-            int tipo = sc.nextInt();
+            // Solicitar el tipo del Pokémon con validación
+            int tipo;
+            do {
+                System.out.println("Seleccione el tipo del Pokémon:");
+                System.out.println("1. Fuego");
+                System.out.println("2. Agua");
+                System.out.println("3. Tierra");
+                System.out.println("4. Planta");
+                while (!sc.hasNextInt()) { // Validar que la entrada sea un número entero
+                    System.out.println("Entrada no válida. Por favor, ingrese un número entre 1 y 4.");
+                    sc.next(); // Limpiar la entrada no válida
+                }
+                tipo = sc.nextInt();
+                if (tipo < 1 || tipo > 4) {
+                    System.out.println("El tipo debe estar entre 1 y 4. Inténtalo de nuevo.");
+                }
+            } while (tipo < 1 || tipo > 4);
 
             TipoPokemon tipoPokemon = switch (tipo) {
                 case 1 -> TipoPokemon.FUEGO;
@@ -128,14 +152,64 @@ public abstract class Pokemon {
                 default -> throw new IllegalArgumentException("Tipo no válido");
             };
 
-            pokemons[i] = new Pokemon(name, hp, tipoPokemon, null) {
+            // Crear ataques personalizados
+            Ataque[] ataques = new Ataque[4]; // Cada Pokémon tiene 4 ataques
+            for (int j = 0; j < ataques.length; j++) {
+                System.out.println("Creando ataque " + (j + 1) + ":");
+
+                // Solicitar el nombre del ataque
+                System.out.println("Ingrese el nombre del ataque:");
+                String ataqueName = sc.next();
+
+                // Solicitar el tipo del ataque con validación
+                int tipoAtaque;
+                do {
+                    System.out.println("Seleccione el tipo del ataque:");
+                    System.out.println("1. Físico");
+                    System.out.println("2. Especial");
+                    while (!sc.hasNextInt()) { // Validar que la entrada sea un número entero
+                        System.out.println("Entrada no válida. Por favor, ingrese 1 o 2.");
+                        sc.next(); // Limpiar la entrada no válida
+                    }
+                    tipoAtaque = sc.nextInt();
+                    if (tipoAtaque < 1 || tipoAtaque > 2) {
+                        System.out.println("El tipo de ataque debe ser 1 o 2. Inténtalo de nuevo.");
+                    }
+                } while (tipoAtaque < 1 || tipoAtaque > 2);
+
+                Pokemon.TipoAtaque tipoAtaqueEnum = switch (tipoAtaque) {
+                    case 1 -> Pokemon.TipoAtaque.FISICO;
+                    case 2 -> Pokemon.TipoAtaque.ESPECIAL;
+                    default -> throw new IllegalArgumentException("Tipo de ataque no válido");
+                };
+
+                // Solicitar el daño del ataque con validación
+                short daño;
+                do {
+                    System.out.println("Ingrese el daño del ataque (entre 10 y 100):");
+                    while (!sc.hasNextShort()) { // Validar que la entrada sea un número corto
+                        System.out.println("Entrada no válida. Por favor, ingrese un número entre 10 y 100.");
+                        sc.next(); // Limpiar la entrada no válida
+                    }
+                    daño = sc.nextShort();
+                    if (daño < 10 || daño > 100) {
+                        System.out.println("El daño debe estar entre 10 y 100. Inténtalo de nuevo.");
+                    }
+                } while (daño < 10 || daño > 100);
+
+                // Crear el ataque
+                ataques[j] = new Ataque(ataqueName, tipoAtaqueEnum, daño);
+            }
+
+            // Crear el Pokémon con los ataques personalizados
+            pokemons[i] = new Pokemon(name, hp, tipoPokemon, ataques) {
                 @Override
                 public void atacar() {
                     System.out.println(getNamePokemon() + " ataca con un movimiento de tipo " + getTypePokemon() + "!");
                 }
             };
         }
-        return pokemons; 
+        return pokemons;
     }
 
     // Método para asignar Pokémon aleatorios
