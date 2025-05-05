@@ -44,13 +44,13 @@ public class ElementPokemon {
 
     public static void initializePokemons() {
         pokemons = new Pokemon[]{
-                new PokemonFuego("Charizard", (short) 282, movimientosFuego),
-                new PokemonAgua("Blastoise", (short) 292, movimientosAgua),
-                new PokemonPlanta("Venusaur", (short) 300, movimientosPlanta),
-                new PokemonTierra("Golem", (short) 320, movimientosTierra),
-                new PokemonFuego("Typhlosion", (short) 200, movimientosFuego), 
-                new PokemonPlanta("Meganium", (short) 180, movimientosPlanta),
-                new PokemonAgua("Feraligatr", (short) 210, movimientosAgua)    
+            new PokemonFuego("Charizard", (short) 282, movimientosFuego, (short) 84, (short) 78, (short) 109, (short) 85, (short) 100, 50),
+            new PokemonAgua("Blastoise", (short) 292, movimientosAgua, (short) 83, (short) 100, (short) 85, (short) 105, (short) 78, 50),
+            new PokemonPlanta("Venusaur", (short) 300, movimientosPlanta, (short) 82, (short) 83, (short) 100, (short) 100, (short) 80, 50),
+            new PokemonTierra("Golem", (short) 320, movimientosTierra, (short) 120, (short) 130, (short) 55, (short) 65, (short) 45, 50),
+            new PokemonFuego("Typhlosion", (short) 200, movimientosFuego, (short) 84, (short) 78, (short) 109, (short) 85, (short) 100, 50),
+            new PokemonPlanta("Meganium", (short) 180, movimientosPlanta, (short) 82, (short) 100, (short) 83, (short) 100, (short) 80, 50),
+            new PokemonAgua("Feraligatr", (short) 210, movimientosAgua, (short) 105, (short) 100, (short) 79, (short) 83, (short) 78, 50)
         };
     }
 
